@@ -1,8 +1,4 @@
-alias cd..="cd .."
-alias ll="ls -l"
-
-
-# Couleurs du préfix du terminal
+# colors
 NM="\[\033[0;38m\]"
 HI="\[\033[0;37m\]"
 HII="\[\033[0;36m\]"
@@ -11,7 +7,9 @@ IN="\[\033[0m\]"
 export CLICOLOR=1
 export LSCOLORS=Exfxcxdxbxegedabagacad
 export PS1="$NM[ $HI\u $HII\h $SI\w$NM ] $IN"
-# ls w/ a twist
+
+# `alias`
+alias cd..="cd .."
 alias ls='ls -GFh'
 alias ll='ls -lGFh'
 alias c='clear'
