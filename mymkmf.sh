@@ -6,9 +6,9 @@ fi
 
 echo "CC = gcc
 
-SRC = $(wildcard *.c) $(wildcard */*.c)
+SRC = \$(wildcard *.c) \$(wildcard */*.c)
 
-OBJ = $(SRC:.c=.o)
+OBJ = \$(SRC:.c=.o)
 
 FLAGS = -W -Wall -Werror -pedantic -ansi -combine
 
@@ -16,16 +16,16 @@ LIBS = $libs
 
 NAME = $name
 
-all: $(NAME)
+all: \$(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) -o $(NAME) $(OBJ) $(LIBS) $(FLAGS)
+\$(NAME): \$(OBJ)
+	\$(CC) -o \$(NAME) \$(OBJ) \$(LIBS) \$(FLAGS)
 
 clean:
-	rm $(OBJ)
+	rm \$(OBJ)
 
 fclean: clean
-	rm $(NAME)
+	rm \$(NAME)
 
 re: fclean all
 
