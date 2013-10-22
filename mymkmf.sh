@@ -30,6 +30,6 @@ fclean: clean
 re: fclean all
 
 test: all
-	...
+	@./\$(NAME)
 
 .PHONY: clean fclean test" > Makefile
