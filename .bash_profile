@@ -20,4 +20,9 @@ alias e='emacs'
 alias cca='gcc *.c -W -Wall -ansi -pedantic -Werror'
 
 md () { mkdir -p "$@" && cd "$@"; }
-mde () { mkdir -p "$@" && cd "$@" && e "$@.c"; }
+mdc () { mkdir -p "$@" && cd "$@" && e "$@.c"; }
+mdp () { mkdir -p "$@" && cd "$@" && e "$@.php"; }
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+PATH=~/homebrew/bin/:$PATH
+HOMEBREW_CACHE=~/Library/Caches/Homebrew
