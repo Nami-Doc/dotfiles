@@ -9,7 +9,6 @@ map <Left> <Nop>
 map <Right> <Nop>
 map <Up> <Nop>
 map <Down> <Nop>
-map <q> <Nop>
 
 map <C-J> <C-W>j
 map <C-H> <C-W>h
