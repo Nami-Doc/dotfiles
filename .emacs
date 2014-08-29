@@ -1,16 +1,27 @@
 (load-file (let ((coding-system-for-read 'utf-8))
                              (shell-command-to-string "agda-mode locate")))
 
+;; packages
 (setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")))
 
 (package-initialize)
 
-;; evil mode - should be in its specific file
+;; os x custom
+
+;; - these handled by the terminal's config "use option as meta"
+;;(setq mac-option-key-is-meta t
+;;      mac-option-modifier 'meta)
+
+;; slime
+(setq inferior-lisp-program "sbcl")
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+
+;; evil mode
 (evil-mode 1)
-;;(add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "Agda")))
-;;(add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
+;;DISABLED (add-hook 'evil-insert-state-entry-hook (lambda () (set-input-method "Agda")))
+;;DISABLED (add-hook 'evil-insert-state-exit-hook (lambda () (set-input-method nil)))
 
 (define-key evil-motion-state-map [left] 'undefined)
 (define-key evil-motion-state-map [right] 'undefined)
