@@ -10,10 +10,19 @@ map <Right> <Nop>
 map <Up> <Nop>
 map <Down> <Nop>
 
+" easier splits jumping
 map <C-J> <C-W>j
 map <C-H> <C-W>h
 map <C-K> <C-W>k
 map <C-L> <C-W>l
+
+" one less keystroke...
+nnoremap : ;
+nnoremap ; :
+
+" visual lines, not hard lines
+nnoremap j gj
+nnoremap k gk
 
 set timeoutlen=10
 set listchars=nbsp:•
