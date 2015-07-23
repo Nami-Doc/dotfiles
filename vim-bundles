@@ -1,0 +1,2 @@
+ls ~/.vim/bundle/
+ctrlp.vim/     nerdtree/      vim-elixir/    vim-fugitive/  vim-gitgutter/ vim-ls/        vim-scala/

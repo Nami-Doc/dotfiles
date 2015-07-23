@@ -1,0 +1,4 @@
+*/SessionDesktop.el
+*.elc
+.DS_Store
+*~
