@@ -1,28 +1,77 @@
 ;; -*- lexical-binding: t -*-
-(load-file (let ((coding-system-for-read 'utf-8))
-                             (shell-command-to-string "agda-mode locate")))
+
+;; agda [disabled]
+  ;(let ((coding-system-for-read 'utf-8))
+	;     (shell-command-to-string "agda-mode locate")))
 
 ;; packages
 (setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ("melpa" . "http://melpa.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")))
 
 (package-initialize)
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
-;; os x custom
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 
-;; - these are handled by the terminal's config "use option as meta"
-;;(setq mac-option-key-is-meta t
-;;      mac-option-modifier 'meta)
 
-;; slime
+;; grrr indentation
+(setq-default tab-width 2)
+(electric-indent-mode +1)
+
+;; y/n is ALWAYS enough.
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; trim whitespace on save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;; slime [disabled]
 ;(setq inferior-lisp-program "sbcl")
 ;(load (expand-file-name "~/quicklisp/slime-helper.el"))
 
 ;; evil mode
+(global-evil-leader-mode)
 (evil-mode 1)
 
+;; bind evil-args
+(define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+(define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+
+(define-key evil-normal-state-map "L" 'evil-forward-arg)
+(define-key evil-normal-state-map "H" 'evil-backward-arg)
+(define-key evil-motion-state-map "L" 'evil-forward-arg)
+(define-key evil-motion-state-map "H" 'evil-backward-arg)
+
+(define-key evil-normal-state-map "K" 'evil-jump-out-args)
+
+;; evil leader
+(evil-leader/set-leader ",")
+(evil-leader/set-key
+  "g" 'magit-status)
+
+;; magit/... evil-integration
+(add-to-list 'load-path "~/.emacs.d/evil-rebellion/")
+(load "evil-rebellion")
+
+;; magit fixes
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(add-hook 'magit-mode-hook
+          (lambda ()
+            (local-set-key (kbd "<escape>") 'magit-mode-quit-window)))
+
+;; add vim-like tabs, because they're good
+(global-evil-tabs-mode t)
+;; add a binding to open a new tab with a buffer
+;; TODO remove this when evil-tabs PR gets merged
+(evil-define-command elscreen-create-and-open (&optional filename)
+  (interactive "<f>")
+  (elscreen-create)
+  (if filename
+    (evil-edit filename)))
+(evil-ex-define-cmd "n" 'elscreen-create-and-open)
+
+;; thou shall be strong and not use those.
 (define-key evil-motion-state-map [left] 'undefined)
 (define-key evil-motion-state-map [right] 'undefined)
 (define-key evil-motion-state-map [up] 'undefined)
@@ -39,32 +88,41 @@
 (define-key evil-motion-state-map (kbd "C-k") 'evil-window-up)
 (define-key evil-motion-state-map (kbd "C-l") 'evil-window-right)
 
-(define-key evil-motion-state-map (kbd "`") 'execute-extended-command)
+(evil-define-command evil-insert-and-ex ()
+  (evil-force-normal-state)
+  (evil-ex))
 
 ;; use : instead of ; and ; instead of :
 (dolist (state-map (list evil-normal-state-map evil-visual-state-map))
   (define-key state-map (kbd ";") 'evil-ex)
-  (define-key state-map (kbd ":") 'evil-repeat-find-char))
+  (define-key state-map (kbd ":") 'evil-repeat-find-char)
+  (define-key state-map (kbd "C-;") 'evil-insert-and-ex)) ; :((((
+
+;; visual lines, not hard lines
+(define-key evil-motion-state-map (kbd "j") 'evil-next-visual-line)
+(define-key evil-motion-state-map (kbd "k") 'evil-previous-visual-line)
 
 ;; agda2-mode
 (global-set-key (kbd "C-c ,") 'agda2-goal-and-context)
 (global-set-key (kbd "C-c .") 'agda2-goal-and-context-and-inferred)
 (global-set-key (kbd "C-c C-@") 'agda2-give)
 
+;; rust stuff
+(setq-default rust-indent-offset 2)
 
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(agda2-include-dirs (quote ("/Users/ven/os/agda/agda-stdlib/src" ".")))
- '(gud-gdb-command-name "gdb --annotate=1")
- '(large-file-warning-threshold nil))
+;; coffee stuff
+(setq-default coffee-indent-tabs-mode t)
+(setq-default coffee-tab-width 2)
 
-;; insert weird chars
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
+ ;; hide elscreen junk in tab names
+ ;;'(elscreen-tab-display-control nil)
+ ;;'(elscreen-tab-display-kill-screen nil)
+
+ ;; split on the right, not on the left
+ ;;'(evil-vsplit-window-right t)
+
+ ;; we don't need to always enforce this...
+ ;;'(require-final-newline nil)
+
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file 'noerror)

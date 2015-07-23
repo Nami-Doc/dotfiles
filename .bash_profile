@@ -6,7 +6,7 @@ SI="\[\033[0;33m\]"
 IN="\[\033[0m\]"
 export CLICOLOR=1
 export LSCOLORS=Exfxcxdxbxegedabagacad
-export PS1="$NM[ $HI\u $HII\h $SI\w$NM ] $IN"
+export PS1="$NM[ $HI\u $SI\w$NM ] $IN"
 
 # `alias`
 alias cd..="cd .."
@@ -24,5 +24,11 @@ mdc () { mkdir -p "$@" && cd "$@" && e "$@.c"; }
 mdp () { mkdir -p "$@" && cd "$@" && e "$@.php"; }
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-PATH=~/homebrew/bin/:$PATH
+PATH=~/homebrew/bin/:/Users/ven/os/perl6/rakudo/install/bin:$PATH
 HOMEBREW_CACHE=~/Library/Caches/Homebrew
+
+export GOPATH=~/os/go/
+
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
+fi
