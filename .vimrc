@@ -16,6 +16,20 @@ map <C-H> <C-W>h
 map <C-K> <C-W>k
 map <C-L> <C-W>l
 
+" move while in insert mode
+inoremap <C-h> <C-o>h
+inoremap <C-j> <C-o>j
+inoremap <C-k> <C-o>k
+inoremap <C-l> <C-o>l
+" ...and then disable the keys
+imap <Left> <Nop>
+imap <Right> <Nop>
+imap <Up> <Nop>
+imap <Down> <Nop>
+
+" incremental search
+set incsearch
+
 " one less keystroke...
 nnoremap : ;
 nnoremap ; :
@@ -33,10 +47,13 @@ function! Repeat()
         exe ":normal a" . repeat(char, times)
 endfunction
 
+let mapleader="\\"
 map <leader>rr :source ~/.vimrc<CR>
+map <leader>o :syntax off<CR>
 
 imap <C-u> <C-o>:call Repeat()<cr>
 set expandtab tabstop=2 shiftwidth=2
+
 
 set splitbelow
 set splitright

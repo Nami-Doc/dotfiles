@@ -10,6 +10,11 @@
                          ("melpa" . "http://melpa.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")))
 
+;; don't change current directory when opening a new file. thanks @rightfold
+(add-hook 'find-file-hook
+          (lambda ()
+            (setq default-directory command-line-default-directory)))
+
 (package-initialize)
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
@@ -32,7 +37,6 @@
         (shell-command-to-string "opam config var share 2> /dev/null")
         0 -1))
 (add-to-list 'load-path "~/.emacs.d/tuareg")
-(add-to-list 'load-path "~/.emacs.d/merlin")
 
 (setq tuareg-use-smie nil)
 (load "tuareg-site-file")
@@ -143,6 +147,10 @@
 
  ;; we don't need to always enforce this...
  ;;'(require-final-newline nil)
+
+
+;; alt/option = emacs super
+(setq mac-option-modifier 'super) ; make opt key do Super
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
