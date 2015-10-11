@@ -20,6 +20,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 
+<<<<<<< HEAD
 ;; grrr indentation
 (setq-default tab-width 2)
 (electric-indent-mode +1)
@@ -50,6 +51,19 @@
 (global-set-key (kbd "C-i") 'completion-at-point)
 
 ;; slime [disabled unless needed]
+
+;; grrr indentation
+(setq-default tab-width 2)
+(electric-indent-mode +1)
+
+;; y/n is ALWAYS enough.
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; trim whitespace on save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;; slime [disabled]
+>>>>>>> 7ee508dc0eff048a047b1eb9b142182b5a48ea7b
 ;(setq inferior-lisp-program "sbcl")
 ;(load (expand-file-name "~/quicklisp/slime-helper.el"))
 
@@ -57,7 +71,7 @@
 (global-evil-leader-mode)
 (evil-mode 1)
 
-;; evil-args
+;; bind evil-args
 (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
 (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
 
