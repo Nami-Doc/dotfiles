@@ -1,0 +1,183 @@
+;; -*- lexical-binding: t -*-
+
+;; agda [disabled]
+					;(let ((coding-system-for-read 'utf-8))
+					;     (shell-command-to-string "agda-mode locate")))
+
+;; packages
+(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
+			 ("gnu" . "http://elpa.gnu.org/packages/")
+			 ("melpa" . "http://melpa.org/packages/")
+			 ("marmalade" . "http://marmalade-repo.org/packages/")))
+
+(package-initialize)
+(add-to-list 'load-path "~/.emacs.d/lisp")
+
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+
+
+;; grrr indentation
+(setq-default tab-width 2)
+(electric-indent-mode +1)
+
+;; y/n is ALWAYS enough.
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; trim whitespace on save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;; slime [disabled]
+					;(setq inferior-lisp-program "sbcl")
+					;(load (expand-file-name "~/quicklisp/slime-helper.el"))
+
+;; evil mode
+(global-evil-leader-mode)
+(evil-mode 1)
+
+;; bind evil-args
+(define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+(define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+
+(define-key evil-normal-state-map "L" 'evil-forward-arg)
+(define-key evil-normal-state-map "H" 'evil-backward-arg)
+(define-key evil-motion-state-map "L" 'evil-forward-arg)
+(define-key evil-motion-state-map "H" 'evil-backward-arg)
+
+(define-key evil-normal-state-map "K" 'evil-jump-out-args)
+
+;; evil leader
+(evil-leader/set-leader ",")
+(evil-leader/set-key
+ "g" 'magit-status)
+
+;; magit/... evil-integration
+(add-to-list 'load-path "~/.emacs.d/evil-rebellion/")
+(load "evil-rebellion")
+
+;; magit fixes
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(add-hook 'magit-mode-hook
+	  (lambda ()
+	    (local-set-key (kbd "<escape>") 'magit-mode-quit-window)))
+
+;; add vim-like tabs, because they're good
+(global-evil-tabs-mode t)
+;; add a binding to open a new tab with a buffer
+;; TODO remove this when evil-tabs PR gets merged
+(evil-define-command elscreen-create-and-open (&optional filename)
+		     (interactive "<f>")
+		     (elscreen-create)
+		     (if filename
+			 (evil-edit filename)))
+(evil-ex-define-cmd "n" 'elscreen-create-and-open)
+
+;; thou shall be strong and not use those.
+(define-key evil-motion-state-map [left] 'undefined)
+(define-key evil-motion-state-map [right] 'undefined)
+(define-key evil-motion-state-map [up] 'undefined)
+(define-key evil-motion-state-map [down] 'undefined)
+
+;; use :help instead of C-h.
+(define-key evil-insert-state-map (kbd "C-h") 'backward-char)
+(define-key evil-insert-state-map (kbd "C-j") 'evil-next-line)
+(define-key evil-insert-state-map (kbd "C-k") 'evil-previous-line)
+(define-key evil-insert-state-map (kbd "C-l") 'forward-char)
+
+(define-key evil-motion-state-map (kbd "C-h") 'evil-window-left)
+(define-key evil-motion-state-map (kbd "C-j") 'evil-window-down)
+(define-key evil-motion-state-map (kbd "C-k") 'evil-window-up)
+(define-key evil-motion-state-map (kbd "C-l") 'evil-window-right)
+
+(evil-define-command evil-insert-and-ex ()
+		     (evil-force-normal-state)
+		     (evil-ex))
+
+;; finding files (see below for the binding)
+;; MERGEME
+(projectile-global-mode)
+
+(dolist (state-map (list evil-normal-state-map evil-visual-state-map))
+  ;; use : instead of ; and ; instead of :
+  (define-key state-map (kbd ";") 'evil-ex)
+  (define-key state-map (kbd ":") 'evil-repeat-find-char)
+  (define-key state-map (kbd "C-;") 'evil-insert-and-ex)
+
+  ;; rebind execute command (M-x)
+  ;;DO NOT MERGEME
+  (define-key state-map (kbd "_") 'execute-extended-command)
+  (define-key state-map (kbd "≈") 'execute-extended-command) ; sigh...
+
+  ;; MERGEME//TODO: better keybindings
+  ;; resizing
+  (define-key state-map (kbd "<down>") 'enlarge-window)
+  (define-key state-map (kbd "<up>") 'shrink-window)
+  (define-key state-map (kbd "<left>") 'shrink-window-horizontally)
+  (define-key state-map (kbd "<right>") 'enlarge-window-horizontally)
+
+  ;; MERGEME
+  ;; get a sublime-like C-p
+  (define-key state-map (kbd "C-f") 'projectile-find-file)
+  )
+
+;; visual lines, not hard lines
+(define-key evil-motion-state-map (kbd "j") 'evil-next-visual-line)
+(define-key evil-motion-state-map (kbd "k") 'evil-previous-visual-line)
+
+;; agda2-mode
+;(global-set-key (kbd "C-c ,") 'agda2-goal-and-context)
+;(global-set-key (kbd "C-c .") 'agda2-goal-and-context-and-inferred)
+;(global-set-key (kbd "C-c C-@") 'agda2-give)
+
+;; rust stuff
+;(setq-default rust-indent-offset 2)
+
+;; coffee stuff
+;(setq-default coffee-indent-tabs-mode t)
+;(setq-default coffee-tab-width 2)
+
+;; hide elscreen junk in tab names
+;; MERGEME//why were they disabled?
+'(elscreen-tab-display-control nil)
+'(elscreen-tab-display-kill-screen nil)
+
+;; split on the right, not on the left
+'(evil-vsplit-window-right t)
+
+;; we don't need to always enforce this...
+;;'(require-final-newline nil)
+
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file 'noerror)
+
+;;use alt for meta
+(setq mac-option-key-is-meta t)
+
+;; MERGEME (from here to the end)
+;; neotree
+(global-set-key [f8] 'neotree-toggle)
+(evil-ex-define-cmd "neo" 'neotree-toggle)
+; from http://www.emacswiki.org/emacs/NeoTree
+(add-hook 'neotree-mode-hook
+          (lambda ()
+            (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
+            (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-enter)
+            (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+            (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
+
+;; stolen from @rightfold
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
+(add-hook 'find-file-hook
+          (lambda () (setq default-directory command-line-default-directory)))
+(global-linum-mode t)
+
+;; make selection text more readable
+// MERGEME????
+(set-face-attribute 'region nil :background "#666" :foreground "#ffffff")
+
+;; we use .ipp for inline c++
+(add-to-list 'auto-mode-alist
+             '("\\.ipp" . c++-mode))
+
+;; magit is our only VCS manager
+(setq vc-handled-backends nil)
