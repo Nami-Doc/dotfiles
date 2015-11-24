@@ -11,16 +11,18 @@
                          ("marmalade" . "http://marmalade-repo.org/packages/")))
 
 ;; don't change current directory when opening a new file. thanks @rightfold
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
 (add-hook 'find-file-hook
           (lambda ()
             (setq default-directory command-line-default-directory)))
+(global-linum-mode t)
 
 (package-initialize)
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 
-<<<<<<< HEAD
 ;; grrr indentation
 (setq-default tab-width 2)
 (electric-indent-mode +1)
@@ -51,19 +53,6 @@
 (global-set-key (kbd "C-i") 'completion-at-point)
 
 ;; slime [disabled unless needed]
-
-;; grrr indentation
-(setq-default tab-width 2)
-(electric-indent-mode +1)
-
-;; y/n is ALWAYS enough.
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;; trim whitespace on save
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;; slime [disabled]
->>>>>>> 7ee508dc0eff048a047b1eb9b142182b5a48ea7b
 ;(setq inferior-lisp-program "sbcl")
 ;(load (expand-file-name "~/quicklisp/slime-helper.el"))
 
@@ -71,7 +60,7 @@
 (global-evil-leader-mode)
 (evil-mode 1)
 
-;; bind evil-args
+;; evil-args
 (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
 (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
 
@@ -125,16 +114,20 @@
 (define-key evil-motion-state-map (kbd "C-k") 'evil-window-up)
 (define-key evil-motion-state-map (kbd "C-l") 'evil-window-right)
 
-;; ?? document this. forces normal mode after.. "insert and ex"?
-(evil-define-command evil-insert-and-ex ()
-  (evil-force-normal-state)
-  (evil-ex))
+;; A smarter C-x b, basically
+(defun switch-to-previous-buffer ()
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
 
 ;; use : instead of ; and ; instead of :
 (dolist (state-map (list evil-normal-state-map evil-visual-state-map))
   (define-key state-map (kbd ";") 'evil-ex)
   (define-key state-map (kbd ":") 'evil-repeat-find-char)
-  (define-key state-map (kbd "C-;") 'evil-insert-and-ex)) ; :((((
+
+  ;; switching buffers is annoying...
+  (define-key state-map (kbd "C-c b") 'switch-to-previous-buffer)
+  
+  ) ; :((((
 
 ;; visual lines, not hard lines
 (define-key evil-motion-state-map (kbd "j") 'evil-next-visual-line)
@@ -168,3 +161,58 @@
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
+
+;; now it's clojure time
+; refactor
+(require 'clj-refactor)
+(defun clj-refactor-hook ()
+  (clj-refactor-mode 1)
+  (yas-minor-mode 1) ; for adding require/use/import
+  (cljr-add-keybindings-with-prefix "C-c C-m")
+  (cljr-add-keybindings-with-prefix "C-c k"))
+(add-hook 'clojure-mode-hook #'clj-refactor-hook)
+; paredit
+(load "paredit")
+(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+(add-hook 'clojure-mode-hook #'enable-paredit-mode)
+; paredit+evil
+(add-hook 'clojure-mode-hook #'evil-paredit-mode)
+; my own stuff...
+(add-hook 'clojure-mode-hook
+          (lambda ()
+            (rainbow-delimiters-mode)
+
+            ; enable window movements while in CIDER
+            (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+            (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+            (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+            (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+
+            (dolist (state-map (list evil-normal-state-map evil-visual-state-map evil-insert-state-map))
+              ; add some paredit commands
+              (define-key state-map (kbd "C-d") nil)
+              (define-key state-map (kbd "C-d h") 'paredit-backward)
+              (define-key state-map (kbd "C-d j") 'paredit-forward-down)
+              (define-key state-map (kbd "C-d k") 'paredit-backward-up)
+              (define-key state-map (kbd "C-d l") 'paredit-forward)
+
+              (define-key state-map (kbd "C-d x") 'paredit-kill)
+
+              ; mnemonic: "in" "out"
+              (define-key state-map (kbd "C-d i") 'paredit-forward-slurp-sexp)
+              (define-key state-map (kbd "C-d o") 'paredit-forward-barf-sexp)
+
+              ; mnemonic: "wrap"/"splice"
+              (define-key state-map (kbd "C-d w") 'paredit-wrap-round)
+              (define-key state-map (kbd "C-d s") 'paredit-splice-sexp)
+
+              ; mnemonic: "extract"
+              (define-key state-map (kbd "C-d e") 'paredit-raise-sexp)
+
+              ; splice-kill
+              (define-key state-map (kbd "C-d a") 'paredit-splice-sexp-killing-backward)
+              (define-key state-map (kbd "C-d s") 'paredit-splice-sexp-killing-forward)
+              )))
+
+; magit is our only VCS manager
+(setq vc-handled-backends nil)
