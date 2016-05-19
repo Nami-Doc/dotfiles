@@ -15,6 +15,14 @@
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 
+;; ido
+(require 'flx-ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(flx-ido-mode 1)
+;; disable ido faces to see flx highlights.
+(setq ido-enable-flex-matching t)
+(setq ido-use-faces nil)
 
 ;; grrr indentation
 (setq-default tab-width 2)
@@ -50,14 +58,12 @@
 (evil-leader/set-key
  "g" 'magit-status)
 
-;; magit/... evil-integration
-(add-to-list 'load-path "~/.emacs.d/evil-rebellion/")
-(load "evil-rebellion")
-
 ;; magit fixes
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (add-hook 'magit-mode-hook
 	  (lambda ()
+      ;evil-magit seems not to do anything for me... rip
+      ;(require 'evil-magit)
 	    (local-set-key (kbd "<escape>") 'magit-mode-quit-window)))
 
 ;; add vim-like tabs, because they're good
@@ -69,13 +75,14 @@
 		     (elscreen-create)
 		     (if filename
 			 (evil-edit filename)))
-(evil-ex-define-cmd "n" 'elscreen-create-and-open)
+(evil-ex-define-cmd "ne" 'elscreen-create-and-open)
 
 ;; thou shall be strong and not use those.
-(define-key evil-motion-state-map [left] 'undefined)
-(define-key evil-motion-state-map [right] 'undefined)
-(define-key evil-motion-state-map [up] 'undefined)
-(define-key evil-motion-state-map [down] 'undefined)
+;; ... is what I'd normally say, but colleagues disagree.
+;(define-key evil-motion-state-map [left] 'undefined)
+;(define-key evil-motion-state-map [right] 'undefined)
+;(define-key evil-motion-state-map [up] 'undefined)
+;(define-key evil-motion-state-map [down] 'undefined)
 
 ;; use :help instead of C-h.
 (define-key evil-insert-state-map (kbd "C-h") 'backward-char)
@@ -93,7 +100,6 @@
 		     (evil-ex))
 
 ;; finding files (see below for the binding)
-;; MERGEME
 (projectile-global-mode)
 
 (dolist (state-map (list evil-normal-state-map evil-visual-state-map))
@@ -103,18 +109,15 @@
   (define-key state-map (kbd "C-;") 'evil-insert-and-ex)
 
   ;; rebind execute command (M-x)
-  ;;DO NOT MERGEME
   (define-key state-map (kbd "_") 'execute-extended-command)
   (define-key state-map (kbd "≈") 'execute-extended-command) ; sigh...
 
-  ;; MERGEME//TODO: better keybindings
   ;; resizing
-  (define-key state-map (kbd "<down>") 'enlarge-window)
-  (define-key state-map (kbd "<up>") 'shrink-window)
-  (define-key state-map (kbd "<left>") 'shrink-window-horizontally)
-  (define-key state-map (kbd "<right>") 'enlarge-window-horizontally)
+  (define-key state-map (kbd "∆") 'enlarge-window) ; M-j
+  (define-key state-map (kbd "˚") 'shrink-window) ; M-˚
+  (define-key state-map (kbd "˙") 'shrink-window-horizontally) ; M-h
+  (define-key state-map (kbd "¬") 'enlarge-window-horizontally) ; M-l
 
-  ;; MERGEME
   ;; get a sublime-like C-p
   (define-key state-map (kbd "C-f") 'projectile-find-file)
   )
@@ -136,7 +139,6 @@
 ;(setq-default coffee-tab-width 2)
 
 ;; hide elscreen junk in tab names
-;; MERGEME//why were they disabled?
 '(elscreen-tab-display-control nil)
 '(elscreen-tab-display-kill-screen nil)
 
@@ -152,9 +154,9 @@
 ;;use alt for meta
 (setq mac-option-key-is-meta t)
 
-;; MERGEME (from here to the end)
 ;; neotree
 (global-set-key [f8] 'neotree-toggle)
+(global-set-key [f9] 'neotree-find)
 (evil-ex-define-cmd "neo" 'neotree-toggle)
 ; from http://www.emacswiki.org/emacs/NeoTree
 (add-hook 'neotree-mode-hook
@@ -172,7 +174,6 @@
 (global-linum-mode t)
 
 ;; make selection text more readable
-// MERGEME????
 (set-face-attribute 'region nil :background "#666" :foreground "#ffffff")
 
 ;; we use .ipp for inline c++
@@ -210,3 +211,8 @@
         nil)
       )))
 (evil-ex-define-cmd "q" 'vimlike-quit)
+
+;; omg mouse?
+(require 'mouse)
+(xterm-mouse-mode t)
+(defun track-mouse (e))
