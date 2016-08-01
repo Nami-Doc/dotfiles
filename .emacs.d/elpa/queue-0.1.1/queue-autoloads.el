@@ -1,0 +1,20 @@
+;;; queue-autoloads.el --- automatically extracted autoloads
+;;
+;;; Code:
+(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
+
+;;;### (autoloads nil "queue" "../../../.emacs.d/elpa/queue-0.1.1/queue.el"
+;;;;;;  (22088 55845 0 0))
+;;; Generated autoloads from ../../../.emacs.d/elpa/queue-0.1.1/queue.el
+
+(defalias 'make-queue 'queue-create "\
+Create an empty queue data structure.")
+
+;;;***
+
+;; Local Variables:
+;; version-control: never
+;; no-byte-compile: t
+;; no-update-autoloads: t
+;; End:
+;;; queue-autoloads.el ends here

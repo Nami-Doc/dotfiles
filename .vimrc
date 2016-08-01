@@ -16,6 +16,9 @@ map <C-H> <C-W>h
 map <C-K> <C-W>k
 map <C-L> <C-W>l
 
+" ^K is useful
+inoremap <C-y> <C-K>
+
 " move while in insert mode
 inoremap <C-h> <C-o>h
 inoremap <C-j> <C-o>j

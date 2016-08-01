@@ -1,0 +1,1 @@
+("~/os/retina/trying.retina/" "/usr/local/" "~/os/clojure/ideas-luminus.clj/" "~/os/c++/osu-performance/" "~/os/rust/smallstack/")
